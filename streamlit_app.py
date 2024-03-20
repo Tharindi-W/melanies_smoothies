@@ -9,6 +9,8 @@ st.title(":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
 st.write(
     """Choose the fruits you want in your custom smoothie!
     """)
+Name_on_order = st.text_input('Name on smoothie:')
+st.write('Name on your smoothie will be:',Name_on_order )
 
 cnx = st.connection("snowflake")
 session = cnx.session()
@@ -36,14 +38,14 @@ if ingredients_list:
         fruityvice_response = requests.get("https://fruityvice.com/api/fruit/"+fruit_chosen )
         fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=TRUE)
     st.write(ingredients_string)
-    my_insert_stmt = """ insert into smoothies.public.orders(ingredients)
-            values ('""" + ingredients_string + """')"""
+    my_insert_stmt = """ insert into smoothies.public.orders(ingredients,Name_on_order)
+            values ('""" + ingredients_string + """','""" + Name_on_order + """')"""
 
     #st.write(my_insert_stmt)
     time_to_insert = st.button('Submit Order')
     if time_to_insert:
         session.sql(my_insert_stmt).collect()
-        st.success('Your Smoothie is ordered!', icon="✅")
+        st.success('Your Smoothie is ordered!,{Name_on_order}', icon="✅")
 
 
 
